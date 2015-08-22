@@ -34,6 +34,12 @@ public class HanLPTokenizer extends Tokenizer
     private boolean enablePorterStemming;
     private final PorterStemmer stemmer = new PorterStemmer();
 
+    /**
+     *
+     * @param segment HanLP中的某个分词器
+     * @param filter 停用词
+     * @param enablePorterStemming 英文原型转换
+     */
     public HanLPTokenizer(Segment segment, Set<String> filter, boolean enablePorterStemming)
     {
         super();

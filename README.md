@@ -40,7 +40,7 @@ while (tokenStream.incrementToken())
     System.out.printf("[%d:%d %d] %s/%s\n", offsetAtt.startOffset(), offsetAtt.endOffset(), positionAttr.getPositionIncrement(), attribute, typeAttr.type());
 }
 ```
-在另一些场景，支持以自定义的分词器（比如开启了命名实体识别的分词器、繁体中文分词器、CRF分词器等）构造HanLPAnalyzer，比如：
+在另一些场景，支持以自定义的分词器（比如开启了命名实体识别的分词器、繁体中文分词器、CRF分词器等）构造HanLPTokenizer，比如：
 ```java
 tokenizer = new HanLPTokenizer(HanLP.newSegment()
                                     .enableJapaneseNameRecognize(true)
