@@ -55,5 +55,6 @@ tokenizer.setReader(new StringReader("林志玲亮相网友:确定不是波多�
 0. 用户词典
 0. 词性标注 
 0. ……
+
 ## 版权
  Apache License Version 2.0
