@@ -60,9 +60,10 @@ public class HanLPAnalyzerTest extends TestCase
         String INDEX_DIR = System.getProperty("java.io.tmpdir") + File.separator + "index";
         Directory directory = FSDirectory.open(Paths.get(INDEX_DIR));
         IndexWriter indexWriter = new IndexWriter(directory, config);
+        indexWriter.deleteAll();
 
         Document document = new Document();
-        document.add(new TextField("content", "被公诉机关指控涉嫌犯罪的当事人称作被告人。", Field.Store.YES));
+        document.add(new TextField("content", "服务大众。", Field.Store.YES));
         indexWriter.addDocument(document);
 
         document = new Document();
@@ -79,8 +80,9 @@ public class HanLPAnalyzerTest extends TestCase
         IndexReader ireader = DirectoryReader.open(directory);
         IndexSearcher isearcher = new IndexSearcher(ireader);
         QueryParser parser = new QueryParser("content", analyzer);
-        Query query = parser.parse("被告人");
+        Query query = parser.parse("和服");
         ScoreDoc[] hits = isearcher.search(query, 300000).scoreDocs;
+        assertEquals(1, hits.length);
         for (ScoreDoc scoreDoc : hits)
         {
             Document targetDoc = isearcher.doc(scoreDoc.doc);
