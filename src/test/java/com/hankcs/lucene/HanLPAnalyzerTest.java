@@ -56,11 +56,10 @@ public class HanLPAnalyzerTest extends TestCase
     {
         Analyzer analyzer = new HanLPAnalyzer();////////////////////////////////////////////////////
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
-        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE_OR_APPEND);
+        config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
         String INDEX_DIR = System.getProperty("java.io.tmpdir") + File.separator + "index";
         Directory directory = FSDirectory.open(Paths.get(INDEX_DIR));
         IndexWriter indexWriter = new IndexWriter(directory, config);
-        indexWriter.deleteAll();
 
         Document document = new Document();
         document.add(new TextField("content", "服务大众。", Field.Store.YES));
