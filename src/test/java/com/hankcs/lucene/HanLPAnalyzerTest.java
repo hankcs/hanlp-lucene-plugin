@@ -70,7 +70,7 @@ public class HanLPAnalyzerTest extends TestCase
         indexWriter.addDocument(document);
 
         document = new Document();
-        document.add(new TextField("content", "和服的价格是每镑15便士", Field.Store.YES));
+        document.add(new TextField("content", "服装店\n\n和服的价格是每镑15便士", Field.Store.YES));
         indexWriter.addDocument(document);
 
         indexWriter.commit();

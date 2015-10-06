@@ -6,7 +6,7 @@
 
     <groupId>com.hankcs.nlp</groupId>
     <artifactId>hanlp-solr-plugin</artifactId>
-    <version>1.0</version>
+    <version>1.0.1</version>
 
     <name>hanlp-solr-plugin</name>
     <url>https://github.com/hankcs/HanLP</url>
