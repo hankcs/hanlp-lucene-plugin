@@ -6,7 +6,7 @@
 
     <groupId>com.hankcs.nlp</groupId>
     <artifactId>hanlp-solr-plugin</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.2</version>
 
     <name>hanlp-solr-plugin</name>
     <url>https://github.com/hankcs/HanLP</url>
@@ -36,6 +36,14 @@
             <version>4.11</version>
             <scope>test</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.lucene</groupId>
+            <artifactId>lucene-highlighter</artifactId>
+            <version>${lucene.version}</version>
+            <scope>test</scope>
+        </dependency>
+
 
         <dependency>
             <groupId>org.apache.lucene</groupId>

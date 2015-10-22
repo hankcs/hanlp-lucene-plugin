@@ -32,6 +32,10 @@ public class SegmentWrapper
      * termArray下标
      */
     int index;
+    /**
+     * term的偏移量，由于wrapper是按行读取的，必须对term.offset做一个校正
+     */
+    int offset;
 
     public SegmentWrapper(BufferedReader br, Segment segment)
     {
@@ -49,6 +53,7 @@ public class SegmentWrapper
         this.br = br;
         termArray = null;
         index = 0;
+        offset = 0;
     }
 
     public Term next() throws IOException
@@ -58,12 +63,17 @@ public class SegmentWrapper
         while (isBlank(line))
         {
             if (line == null) return null;
+            offset += line.length() + 1;
             line = br.readLine();
         }
 
         List<Term> termList = segment.seg(line);
         if (termList.size() == 0) return null;
         termArray = termList.toArray(new Term[0]);
+        for (Term term : termArray)
+        {
+            term.offset += offset;
+        }
         index = 0;
 
         return termArray[index++];
