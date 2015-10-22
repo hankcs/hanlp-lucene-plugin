@@ -6,7 +6,7 @@
 
     <groupId>com.hankcs.nlp</groupId>
     <artifactId>hanlp-solr-plugin</artifactId>
-    <version>1.0.2</version>
+    <version>1.0.3</version>
 
     <name>hanlp-solr-plugin</name>
     <url>https://github.com/hankcs/HanLP</url>
@@ -20,6 +20,7 @@
         <javac.src.version>1.7</javac.src.version>
         <javac.target.version>1.7</javac.target.version>
         <maven.compiler.plugin.version>3.3</maven.compiler.plugin.version>
+        <maven-source-plugin.version>2.4</maven-source-plugin.version>
     </properties>
 
     <dependencies>
@@ -73,6 +74,18 @@
                     <source>${javac.target.version}</source>
                 </configuration>
                 <version>${maven.compiler.plugin.version}</version>
+            </plugin>
+            <plugin>
+                <artifactId>maven-source-plugin</artifactId>
+                <version>${maven-source-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>attach-sources</id>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

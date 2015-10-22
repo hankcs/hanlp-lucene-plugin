@@ -60,14 +60,21 @@ public class HighLighterTest extends TestCase
             {
                 // 加入一个文档
                 Document doc = new Document();
-                doc.add(new TextField(fieldName, "我白天是一名语言学习者，晚上是一名初级码农。空的时候喜欢看算法和应用数学书，也喜欢悬疑推理小说，ACG方面喜欢型月、轨迹。喜欢有思想深度的事物，讨厌急躁、拜金与安逸的人。目前在魔都某女校学习，这是我的个人博客。闻道有先后，术业有专攻，请多多关照。你喜欢写代码吗？", Field.Store.YES));
+                doc.add(new TextField(fieldName, "我白天是一名语言学习者，晚上是一名初级码农。\n" +
+                        "\n" +
+                        "\n" +
+                        "\n空的时候喜欢看算法和应用数学书，也喜欢悬疑推理小说，ACG方面喜欢型月、轨迹。\n" +
+                        "\n" +
+                        "\n" +
+                        "\n" +
+                        "\n喜欢有思想深度的事物，讨厌急躁、拜金与安逸的人。目前在魔都某女校学习，这是我的个人博客。闻道有先后，术业有专攻，请多多关照。你喜欢写代码吗？", Field.Store.YES));
                 doc.add(new TextField("title", "关于hankcs", Field.Store.YES));
                 iwriter.addDocument(doc);
             }
             {
                 // 再加入一个
                 Document doc = new Document();
-                doc.add(new TextField(fieldName, "\n\n   \n程序员喜欢黑夜", Field.Store.YES));
+                doc.add(new TextField(fieldName, "\n\n   \n程序员\n\n喜欢黑夜", Field.Store.YES));
                 doc.add(new TextField("title", "关于程序员", Field.Store.YES));
                 iwriter.addDocument(doc);
             }

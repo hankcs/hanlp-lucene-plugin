@@ -75,6 +75,7 @@ public class SegmentWrapper
             term.offset += offset;
         }
         index = 0;
+        offset += line.length() + 1;
 
         return termArray[index++];
     }
