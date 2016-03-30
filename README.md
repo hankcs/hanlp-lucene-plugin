@@ -23,20 +23,20 @@ HanLP中文分词solr插件
 ## 高级配置
  目前本插件支持如下基于```schema.xml```的配置:
 
- | 配置项名称        | 功能   |  默认值  |
- | --------   | -----:  | :----:  |
- | enableIndexMode    | 设为索引模式 |   true     |
- | enableCustomDictionary    | 是否启用用户词典 |   true     |
- | customDictionaryPath    | 用户词典路径(绝对路径或程序可以读取的相对路径,多个词典用空格隔开) |   null     |
- | stopWordDictionaryPath    | 停用词词典路径 |   null     |
- | enableNumberQuantifierRecognize    | 是否启用数词和数量词识别 |   true     |
- | enableNameRecognize    | 开启人名识别 |   true     |
- | enableTranslatedNameRecognize    | 是否启用音译人名识别 |   false     |
- | enableJapaneseNameRecognize    | 是否启用日本人名识别 |   false     |
- | enableOrganizationRecognize    | 开启机构名识别 |   false     |
- | enablePlaceRecognize    | 开启地名识别 |   false     |
- | enableNormalization    | 是否执行字符正规化（繁体->简体，全角->半角，大写->小写） |   false     |
- | enableTraditionalChineseMode    | 开启精准繁体中文分词 |   false     |
+| 配置项名称       | 功能   |  默认值  |
+| --------   | -----:  | :----:  |
+| enableIndexMode    | 设为索引模式 |   true     |
+| enableCustomDictionary    | 是否启用用户词典 |   true     |
+| customDictionaryPath    | 用户词典路径(绝对路径或程序可以读取的相对路径,多个词典用空格隔开) |   null     |
+| stopWordDictionaryPath    | 停用词词典路径 |   null     |
+| enableNumberQuantifierRecognize    | 是否启用数词和数量词识别 |   true     |
+| enableNameRecognize    | 开启人名识别 |   true     |
+| enableTranslatedNameRecognize    | 是否启用音译人名识别 |   false     |
+| enableJapaneseNameRecognize    | 是否启用日本人名识别 |   false     |
+| enableOrganizationRecognize    | 开启机构名识别 |   false     |
+| enablePlaceRecognize    | 开启地名识别 |   false     |
+| enableNormalization    | 是否执行字符正规化（繁体->简体，全角->半角，大写->小写） |   false     |
+| enableTraditionalChineseMode    | 开启精准繁体中文分词 |   false     |
 
  更高级的配置主要通过class path下的```hanlp.properties```进行配置，请阅读[HanLP自然语言处理包文档](https://github.com/hankcs/HanLP)以了解更多相关配置，如：
 
