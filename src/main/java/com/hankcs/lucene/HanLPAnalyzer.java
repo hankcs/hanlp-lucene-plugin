@@ -8,9 +8,8 @@ import java.util.Set;
 
 public class HanLPAnalyzer extends Analyzer
 {
-
-    boolean enablePorterStemming;
-    public Set<String> filter;
+    private boolean enablePorterStemming;
+    private Set<String> filter;
 
     /**
      * @param filter    停用词
@@ -19,6 +18,7 @@ public class HanLPAnalyzer extends Analyzer
     public HanLPAnalyzer(Set<String> filter, boolean enablePorterStemming)
     {
         this.filter = filter;
+        this.enablePorterStemming = enablePorterStemming;
     }
 
     /**

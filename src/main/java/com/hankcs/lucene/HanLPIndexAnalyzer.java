@@ -19,6 +19,7 @@ public class HanLPIndexAnalyzer extends Analyzer
     public HanLPIndexAnalyzer(Set<String> filter, boolean pstemming)
     {
         this.filter = filter;
+        this.pstemming = pstemming;
     }
 
     /**

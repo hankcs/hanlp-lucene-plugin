@@ -20,6 +20,7 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
+import org.apache.lucene.store.RAMDirectory;
 
 import java.io.File;
 import java.nio.file.Paths;
@@ -57,20 +58,19 @@ public class HanLPAnalyzerTest extends TestCase
         Analyzer analyzer = new HanLPAnalyzer();////////////////////////////////////////////////////
         IndexWriterConfig config = new IndexWriterConfig(analyzer);
         config.setOpenMode(IndexWriterConfig.OpenMode.CREATE);
-        String INDEX_DIR = System.getProperty("java.io.tmpdir") + File.separator + "index";
-        Directory directory = FSDirectory.open(Paths.get(INDEX_DIR));
+        Directory directory = new RAMDirectory();
         IndexWriter indexWriter = new IndexWriter(directory, config);
 
         Document document = new Document();
-        document.add(new TextField("content", "服务大众。", Field.Store.YES));
+        document.add(new TextField("content", "[新闻]服务大众。", Field.Store.YES));
         indexWriter.addDocument(document);
 
         document = new Document();
-        document.add(new TextField("content", "商品和服务", Field.Store.YES));
+        document.add(new TextField("content", "[经济学]商品和服务", Field.Store.YES));
         indexWriter.addDocument(document);
 
         document = new Document();
-        document.add(new TextField("content", "服装店\n\n和服的价格是每镑15便士", Field.Store.YES));
+        document.add(new TextField("content", "[服装店]和服的价格是每镑15便士", Field.Store.YES));
         indexWriter.addDocument(document);
 
         indexWriter.commit();

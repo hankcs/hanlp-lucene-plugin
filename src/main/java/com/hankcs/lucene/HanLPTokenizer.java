@@ -1,6 +1,7 @@
 package com.hankcs.lucene;
 
 
+import com.hankcs.hanlp.collection.trie.bintrie.BinTrie;
 import com.hankcs.hanlp.corpus.tag.Nature;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
@@ -28,8 +29,8 @@ public class HanLPTokenizer extends Tokenizer
     // 词性
     private TypeAttribute typeAtt = addAttribute(TypeAttribute.class);
 
-    protected SegmentWrapper segment;
-    private Set<String> filter;
+    private SegmentWrapper segment;
+    private BinTrie<String> filter;
     private boolean enablePorterStemming;
     private final PorterStemmer stemmer = new PorterStemmer();
 
@@ -43,7 +44,14 @@ public class HanLPTokenizer extends Tokenizer
     {
         super();
         this.segment = new SegmentWrapper(new BufferedReader(input), segment);
-        this.filter = filter;
+        if (filter != null && filter.size() > 0)
+        {
+            this.filter = new BinTrie<String>();
+            for (String stopWord : filter)
+            {
+                this.filter.put(stopWord, null);
+            }
+        }
         this.enablePorterStemming = enablePorterStemming;
     }
 
@@ -66,7 +74,7 @@ public class HanLPTokenizer extends Tokenizer
                 term.word = stemmer.stem(term.word);
             }
 
-            if (filter != null && filter.contains(term.word))
+            if (filter != null && filter.containsKey(term.word))
             {
                 continue;
             }
