@@ -29,8 +29,8 @@ import java.io.IOException;
 
 /**
  * 演示高亮搜索结果
- * @author hankcs
  *
+ * @author hankcs
  */
 public class HighLighterTest extends TestCase
 {
@@ -60,15 +60,8 @@ public class HighLighterTest extends TestCase
             {
                 // 加入一个文档
                 Document doc = new Document();
-                doc.add(new TextField(fieldName, "我白天是一名语言学习者，晚上是一名初级码农。\n" +
-                        "\n" +
-                        "\n" +
-                        "\n空的时候喜欢看算法和应用数学书，也喜欢悬疑推理小说，ACG方面喜欢型月、轨迹。\n" +
-                        "\n" +
-                        "\n" +
-                        "\n" +
-                        "\n喜欢有思想深度的事物，讨厌急躁、拜金与安逸的人。目前在魔都某女校学习，这是我的个人博客。闻道有先后，术业有专攻，请多多关照。你喜欢写代码吗？", Field.Store.YES));
-                doc.add(new TextField("title", "关于hankcs", Field.Store.YES));
+                doc.add(new TextField(fieldName, "\r\n\r\n\r\n 返回值", Field.Store.YES));
+                doc.add(new TextField("title", "测试回测换行符", Field.Store.YES));
                 iwriter.addDocument(doc);
             }
             {
@@ -85,7 +78,7 @@ public class HighLighterTest extends TestCase
             ireader = DirectoryReader.open(directory);
             isearcher = new IndexSearcher(ireader);
 
-            String keyword = "喜欢";
+            String keyword = "返回";
             //使用QueryParser查询分析器构造Query对象
             QueryParser qp = new QueryParser(fieldName, analyzer);
             Query query = qp.parse(keyword);
@@ -156,9 +149,10 @@ public class HighLighterTest extends TestCase
 
     /**
      * 获取高亮显示结果的html代码
-     * @param query 查询
-     * @param analyzer 分词器
-     * @param fieldName 域名
+     *
+     * @param query        查询
+     * @param analyzer     分词器
+     * @param fieldName    域名
      * @param fieldContent 域内容
      * @param fragmentSize 结果的长度（不含html标签长度）
      * @return 结果（一段html代码）
@@ -168,7 +162,7 @@ public class HighLighterTest extends TestCase
     static String displayHtmlHighlight(Query query, Analyzer analyzer, String fieldName, String fieldContent, int fragmentSize) throws IOException, InvalidTokenOffsetsException
     {
         //创建一个高亮器
-        Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("<font color='red'>", "</font>"), new QueryScorer(query));
+        Highlighter highlighter = new Highlighter(new SimpleHTMLFormatter("【", "】"), new QueryScorer(query));
         Fragmenter fragmenter = new SimpleFragmenter(fragmentSize);
         highlighter.setTextFragmenter(fragmenter);
         return highlighter.getBestFragment(analyzer, fieldName, fieldContent);

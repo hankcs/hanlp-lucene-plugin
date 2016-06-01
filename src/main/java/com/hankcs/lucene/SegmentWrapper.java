@@ -13,16 +13,17 @@ package com.hankcs.lucene;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
 
-import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.util.List;
+import java.util.Scanner;
 
 /**
  * @author hankcs
  */
 public class SegmentWrapper
 {
-    BufferedReader br;
+    Scanner scanner;
     Segment segment;
     /**
      * 因为next是单个term出去的，所以在这里做一个记录
@@ -37,20 +38,20 @@ public class SegmentWrapper
      */
     int offset;
 
-    public SegmentWrapper(BufferedReader br, Segment segment)
+    public SegmentWrapper(Reader reader, Segment segment)
     {
-        this.br = br;
+        scanner = createScanner(reader);
         this.segment = segment;
     }
 
     /**
      * 重置分词器
      *
-     * @param br
+     * @param reader
      */
-    public void reset(BufferedReader br)
+    public void reset(Reader reader)
     {
-        this.br = br;
+        scanner = createScanner(reader);
         termArray = null;
         index = 0;
         offset = 0;
@@ -59,12 +60,13 @@ public class SegmentWrapper
     public Term next() throws IOException
     {
         if (termArray != null && index < termArray.length) return termArray[index++];
-        String line = br.readLine();
+        if (!scanner.hasNext()) return null;
+        String line = scanner.next();
         while (isBlank(line))
         {
             if (line == null) return null;
             offset += line.length() + 1;
-            line = br.readLine();
+            line = scanner.next();
         }
 
         List<Term> termList = segment.seg(line);
@@ -101,5 +103,10 @@ public class SegmentWrapper
             }
         }
         return true;
+    }
+
+    private static Scanner createScanner(Reader reader)
+    {
+        return new Scanner(reader).useDelimiter("\n");
     }
 }

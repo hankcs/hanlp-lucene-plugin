@@ -43,7 +43,7 @@ public class HanLPTokenizer extends Tokenizer
     public HanLPTokenizer(Segment segment, Set<String> filter, boolean enablePorterStemming)
     {
         super();
-        this.segment = new SegmentWrapper(new BufferedReader(input), segment);
+        this.segment = new SegmentWrapper(input, segment);
         if (filter != null && filter.size() > 0)
         {
             this.filter = new BinTrie<String>();
