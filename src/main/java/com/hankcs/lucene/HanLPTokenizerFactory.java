@@ -59,6 +59,9 @@ public class HanLPTokenizerFactory extends TokenizerFactory
             stopWordDictionary = new TreeSet<>();
             stopWordDictionary.addAll(IOUtil.readLineListWithLessMemory(stopWordDictionaryPath));
         }
+        if (getBoolean(args, "enableDebug", false)) {
+          HanLP.Config.enableDebug();
+        }
     }
 
     @Override
