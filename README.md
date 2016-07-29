@@ -37,6 +37,7 @@ HanLP中文分词solr插件
 | enablePlaceRecognize    | 开启地名识别 |   false     |
 | enableNormalization    | 是否执行字符正规化（繁体->简体，全角->半角，大写->小写） |   false     |
 | enableTraditionalChineseMode    | 开启精准繁体中文分词 |   false     |
+| enableDebug    | 开启除错模式 |   false     |
 
  更高级的配置主要通过class path下的```hanlp.properties```进行配置，请阅读[HanLP自然语言处理包文档](https://github.com/hankcs/HanLP)以了解更多相关配置，如：
 
