@@ -66,7 +66,11 @@ public class SegmentWrapper
         {
             if (line == null) return null;
             offset += line.length() + 1;
-            line = scanner.next();
+            if (scanner.hasNext()) {
+              line = scanner.next();
+            } else {
+              return null;
+            }
         }
 
         List<Term> termList = segment.seg(line);
