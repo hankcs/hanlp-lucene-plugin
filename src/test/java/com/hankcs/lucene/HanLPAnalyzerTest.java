@@ -3,12 +3,14 @@ package com.hankcs.lucene;
 import junit.framework.TestCase;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
 import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
@@ -23,8 +25,11 @@ import org.apache.lucene.store.FSDirectory;
 import org.apache.lucene.store.RAMDirectory;
 
 import java.io.File;
+import java.io.StringReader;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.TreeMap;
 
 public class HanLPAnalyzerTest extends TestCase
 {
@@ -86,6 +91,30 @@ public class HanLPAnalyzerTest extends TestCase
         {
             Document targetDoc = isearcher.doc(scoreDoc.doc);
             System.out.println(targetDoc.getField("content").stringValue());
+        }
+    }
+
+    public void testIssue() throws Exception
+    {
+        Map<String, String> args = new TreeMap<>();
+        args.put("enableTraditionalChineseMode", "true");
+        args.put("enableNormalization", "true");
+        HanLPTokenizerFactory factory = new HanLPTokenizerFactory(args);
+        Tokenizer tokenizer = factory.create();
+        String text = "會辦台星保證最低價的原因？";
+
+        tokenizer.setReader(new StringReader(text));
+        tokenizer.reset();
+        while (tokenizer.incrementToken())
+        {
+            CharTermAttribute attribute = tokenizer.getAttribute(CharTermAttribute.class);
+            // 偏移量
+            OffsetAttribute offsetAtt = tokenizer.getAttribute(OffsetAttribute.class);
+            // 距离
+            PositionIncrementAttribute positionAttr = tokenizer.getAttribute(PositionIncrementAttribute.class);
+            // 词性
+            TypeAttribute typeAttr = tokenizer.getAttribute(TypeAttribute.class);
+            System.out.printf("[%d:%d %d] %s/%s\n", offsetAtt.startOffset(), offsetAtt.endOffset(), positionAttr.getPositionIncrement(), attribute, typeAttr.type());
         }
     }
 }
