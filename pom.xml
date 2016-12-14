@@ -5,16 +5,43 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.hankcs.nlp</groupId>
-    <artifactId>hanlp-solr-plugin</artifactId>
+    <artifactId>hanlp-lucene-plugin</artifactId>
     <version>1.1.2</version>
 
     <name>hanlp-solr-plugin</name>
-    <url>https://github.com/hankcs/HanLP</url>
+    <url>https://github.com/hankcs/hanlp-lucene-plugin</url>
+    <description>
+        A Lucene tokenizer plugin for both Simplified Chinese and Traditional Chinese,
+        featured with Chinese Word Segmentation, custom dictionary etc.
+    </description>
+    <organization>
+        <name>码农场</name>
+        <url>http://www.hankcs.com/</url>
+    </organization>
+    <licenses>
+        <license>
+            <name>Apache License Version 2.0</name>
+            <url>https://www.apache.org/licenses/LICENSE-2.0.html</url>
+        </license>
+    </licenses>
+    <inceptionYear>2014</inceptionYear>
+    <developers>
+        <developer>
+            <name>hankcs</name>
+            <email>me@hankcs.com</email>
+            <url>http://www.hankcs.com</url>
+        </developer>
+    </developers>
+    <scm>
+        <connection>scm:git@github.com:hankcs/hanlp-lucene-plugin.git</connection>
+        <developerConnection>scm:git@github.com:hankcs/hanlp-lucene-plugin.git</developerConnection>
+        <url>git@github.com:hankcs/hanlp-lucene-plugin.git</url>
+    </scm>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <hanlp.version>portable-1.2.10</hanlp.version>
+        <hanlp.version>portable-1.3.1</hanlp.version>
         <lucene.version>5.1.0</lucene.version>
 
         <javac.src.version>1.7</javac.src.version>
@@ -87,7 +114,59 @@
                     </execution>
                 </executions>
             </plugin>
+            <!-- Javadoc -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9.1</version>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>jar</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- GPG -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>1.5</version>
+                <executions>
+                    <execution>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
     </build>
+
+    <!--禁用Java8过于严格的javadoc警告-->
+    <profiles>
+        <profile>
+            <id>disable-java8-doclint</id>
+            <activation>
+                <jdk>[1.8,)</jdk>
+            </activation>
+            <properties>
+                <additionalparam>-Xdoclint:none</additionalparam>
+            </properties>
+        </profile>
+    </profiles>
+
+    <distributionManagement>
+        <snapshotRepository>
+            <id>maven-repo</id>
+            <url>https://oss.sonatype.org/content/repositories/snapshots/</url>
+        </snapshotRepository>
+        <repository>
+            <id>maven-repo</id>
+            <url>https://oss.sonatype.org/service/local/staging/deploy/maven2/</url>
+        </repository>
+    </distributionManagement>
 
 </project>
