@@ -20,13 +20,24 @@ HanLP中文分词Lucene插件
  0. 修改solr core的配置文件```${core}/conf/schema.xml```：
  
     ```
-    <fieldType name="text_cn" class="solr.TextField">
-        <analyzer type="index">
-            <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="true"/>
-        </analyzer>
-        <analyzer type="query">
-            <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="false"/>
-        </analyzer>
+    <!-- 默认文本类型: 指定使用HanLP分词器，同时开启索引模式。
+	 通过solr自带的停用词过滤器，使用"stopwords.txt"（默认空白）过滤。
+	 在搜索的时候，还支持solr自带的同义词词典。-->
+    <fieldType name="text_general" class="solr.TextField" positionIncrementGap="100">
+      <analyzer type="index">
+        <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="true"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <!-- 取消注释可以启用索引期间的同义词词典
+        <filter class="solr.SynonymFilterFactory" synonyms="index_synonyms.txt" ignoreCase="true" expand="false"/>
+        -->
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
+      <analyzer type="query">
+        <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="true"/>
+        <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
+        <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
+        <filter class="solr.LowerCaseFilterFactory"/>
+      </analyzer>
     </fieldType>
     ```
 
