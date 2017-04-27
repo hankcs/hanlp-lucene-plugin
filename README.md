@@ -16,8 +16,8 @@ HanLP中文分词Lucene插件
 ```
 
 ## Solr快速上手
- 0. 将[hanlp-portable.jar](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.hankcs%22%20AND%20a%3A%22hanlp%22)和[hanlp-lucene-plugin.jar](https://github.com/hankcs/hanlp-lucene-plugin/releases)共两个jar放入```${webapp}/WEB-INF/lib```下
- 0. 修改solr core的配置文件```${core}/conf/schema.xml```：
+ 1. 将[hanlp-portable.jar](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.hankcs%22%20AND%20a%3A%22hanlp%22)和[hanlp-lucene-plugin.jar](https://github.com/hankcs/hanlp-lucene-plugin/releases)共两个jar放入```${webapp}/WEB-INF/lib```下
+ 1. 修改solr core的配置文件```${core}/conf/schema.xml```：
  
     ```
     <!-- 默认文本类型: 指定使用HanLP分词器，同时开启索引模式。
@@ -33,13 +33,15 @@ HanLP中文分词Lucene插件
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
       <analyzer type="query">
-        <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="true"/>
+        <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="false"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
     </fieldType>
     ```
+ * solr允许为不同的字段指定不同的分词器，由于绝大部分默认字段都是text_general类型的，可以说这种做法比较适合新手。如果你是solr老手的话，你可能会更喜欢单独为不同的字段指定不同的分词器及其他配置。如果你的业务系统中有其他字段，比如location，summary之类，也需要一一指定其type="text_general"。切记，否则这些字段仍旧是solr默认分词器，会造成这些字段“搜索不到”。
+ * 另外，切记不要在query中开启indexMode，否则会影响PhaseQuery。indexMode只需在index中开启一遍即可。
 
 ## 高级配置
  目前本插件支持如下基于```schema.xml```的配置:
