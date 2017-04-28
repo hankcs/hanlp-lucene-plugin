@@ -80,7 +80,7 @@ HanLP中文分词Lucene插件
         <filter class="solr.LowerCaseFilterFactory"/>
       </analyzer>
       <analyzer type="query">
-        <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="true"/>
+        <tokenizer class="com.hankcs.lucene.HanLPTokenizerFactory" enableIndexMode="false"/>
         <filter class="solr.StopFilterFactory" ignoreCase="true" words="stopwords.txt" />
         <filter class="solr.SynonymFilterFactory" synonyms="synonyms.txt" ignoreCase="true" expand="true"/>
         <filter class="solr.LowerCaseFilterFactory"/>
@@ -109,7 +109,7 @@ while (tokenStream.incrementToken())
     // 偏移量
     OffsetAttribute offsetAtt = tokenStream.getAttribute(OffsetAttribute.class);
     // 距离
-    PositionIncrementAttribute positionAttr = kenStream.getAttribute(PositionIncrementAttribute.class);
+    PositionIncrementAttribute positionAttr = tokenStream.getAttribute(PositionIncrementAttribute.class);
     // 词性
     TypeAttribute typeAttr = tokenStream.getAttribute(TypeAttribute.class);
     System.out.printf("[%d:%d %d] %s/%s\n", offsetAtt.startOffset(), offsetAtt.endOffset(), positionAttr.getPositionIncrement(), attribute, typeAttr.type());
