@@ -34,6 +34,8 @@ public class HanLPTokenizer extends Tokenizer
     private boolean enablePorterStemming;
     private final PorterStemmer stemmer = new PorterStemmer();
 
+    private int totalOffset = 0;
+
     /**
      *
      * @param segment HanLP中的某个分词器
@@ -90,7 +92,8 @@ public class HanLPTokenizer extends Tokenizer
         {
             positionAttr.setPositionIncrement(position);
             termAtt.setEmpty().append(term.word);
-            offsetAtt.setOffset(term.offset, term.offset + term.word.length());
+            offsetAtt.setOffset(totalOffset + term.offset,
+                    totalOffset + term.offset + term.word.length());
             typeAtt.setType(term.nature == null ? "null" : term.nature.toString());
             return true;
         }
@@ -107,6 +110,7 @@ public class HanLPTokenizer extends Tokenizer
     public void reset() throws IOException
     {
         super.reset();
+        totalOffset += segment.offset;
         segment.reset(new BufferedReader(this.input));
     }
 
