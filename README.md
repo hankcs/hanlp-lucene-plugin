@@ -3,7 +3,7 @@ hanlp-lucene-plugin
 
 HanLP中文分词Lucene插件
 ----------------------
-基于HanLP，支持包括Solr在内的任何基于Lucene的系统。
+基于HanLP，支持包括Solr（7.x）在内的任何基于Lucene（7.x）的系统。
 
 ## Maven
 
@@ -11,12 +11,12 @@ HanLP中文分词Lucene插件
     <dependency>
       <groupId>com.hankcs.nlp</groupId>
       <artifactId>hanlp-lucene-plugin</artifactId>
-      <version>1.1.2</version>
+      <version>1.1.3</version>
     </dependency>
 ```
 
 ## Solr快速上手
- 1. 将[hanlp-portable.jar](http://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.hankcs%22%20AND%20a%3A%22hanlp%22)和[hanlp-lucene-plugin.jar](https://github.com/hankcs/hanlp-lucene-plugin/releases)共两个jar放入```${webapp}/WEB-INF/lib```下
+ 1. 将[hanlp-portable.jar](http://central.maven.org/maven2/com/hankcs/hanlp/portable-1.5.3/hanlp-portable-1.5.3.jar)和[hanlp-lucene-plugin.jar](https://github.com/hankcs/hanlp-lucene-plugin/releases)共两个jar放入```${webapp}/WEB-INF/lib```下。（或者使用```mvn package```对源码打包，拷贝```target/hanlp-lucene-plugin-x.x.x.jar```到```${webapp}/WEB-INF/lib```下）
  1. 修改solr core的配置文件```${core}/conf/schema.xml```：
  
 ```xml
