@@ -92,8 +92,9 @@ public class HanLPTokenizer extends Tokenizer
         {
             positionAttr.setPositionIncrement(position);
             termAtt.setEmpty().append(term.word);
-            offsetAtt.setOffset(totalOffset + term.offset,
-                    totalOffset + term.offset + term.word.length());
+            totalOffset += term.offset + term.word.length();
+            offsetAtt.setOffset(correctOffset(term.offset),
+                    correctOffset(term.offset + term.word.length()));
             typeAtt.setType(term.nature == null ? "null" : term.nature.toString());
             return true;
         }
@@ -103,6 +104,11 @@ public class HanLPTokenizer extends Tokenizer
         }
     }
 
+    @Override
+    public void end() throws IOException {
+        offsetAtt.setOffset(totalOffset, totalOffset);
+    }
+
     /**
      * 必须重载的方法，否则在批量索引文件时将会导致文件索引失败
      */
@@ -110,7 +116,7 @@ public class HanLPTokenizer extends Tokenizer
     public void reset() throws IOException
     {
         super.reset();
-        totalOffset += segment.offset;
+        totalOffset = 0;
         segment.reset(new BufferedReader(this.input));
     }
 
