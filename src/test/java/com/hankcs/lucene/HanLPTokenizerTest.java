@@ -40,4 +40,22 @@ public class HanLPTokenizerTest extends TestCase
             System.out.printf("[%d:%d %d] %s/%s\n", offsetAtt.startOffset(), offsetAtt.endOffset(), positionAttr.getPositionIncrement(), attribute, typeAttr.type());
         }
     }
+
+    public void testMultiText() throws Exception
+    {
+        String[] sentences = new String[]{
+                "中华人民共和国",
+                "地大物博"
+        };
+        tokenizer = new HanLPTokenizer(HanLP.newSegment()
+                                               .enableJapaneseNameRecognize(true)
+                                               .enableIndexMode(true), null, false);
+        for (String sentence : sentences)
+        {
+            tokenizer.setReader(new StringReader(sentence));
+            tokenizer.reset();
+            testIncrementToken();
+            tokenizer.close();
+        }
+    }
 }

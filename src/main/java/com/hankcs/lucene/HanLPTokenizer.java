@@ -105,7 +105,9 @@ public class HanLPTokenizer extends Tokenizer
     }
 
     @Override
-    public void end() throws IOException {
+    public void end() throws IOException
+    {
+        super.end();
         offsetAtt.setOffset(totalOffset, totalOffset);
     }
 
