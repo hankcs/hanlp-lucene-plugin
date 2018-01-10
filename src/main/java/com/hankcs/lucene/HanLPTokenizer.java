@@ -34,6 +34,9 @@ public class HanLPTokenizer extends Tokenizer
     private boolean enablePorterStemming;
     private final PorterStemmer stemmer = new PorterStemmer();
 
+    /**
+     * 单文档当前所在的总offset，当reset（切换multi-value fields中的value）的时候不清零，在end（切换field）时清零
+     */
     private int totalOffset = 0;
 
     /**
@@ -92,14 +95,14 @@ public class HanLPTokenizer extends Tokenizer
         {
             positionAttr.setPositionIncrement(position);
             termAtt.setEmpty().append(term.word);
-            totalOffset += term.offset + term.word.length();
-            offsetAtt.setOffset(correctOffset(term.offset),
-                    correctOffset(term.offset + term.word.length()));
+            offsetAtt.setOffset(correctOffset(totalOffset + term.offset),
+                    correctOffset(totalOffset + term.offset + term.word.length()));
             typeAtt.setType(term.nature == null ? "null" : term.nature.toString());
             return true;
         }
         else
         {
+            totalOffset += segment.offset;
             return false;
         }
     }
@@ -109,6 +112,7 @@ public class HanLPTokenizer extends Tokenizer
     {
         super.end();
         offsetAtt.setOffset(totalOffset, totalOffset);
+        totalOffset = 0;
     }
 
     /**
@@ -118,7 +122,6 @@ public class HanLPTokenizer extends Tokenizer
     public void reset() throws IOException
     {
         super.reset();
-        totalOffset = 0;
         segment.reset(new BufferedReader(this.input));
     }
 
