@@ -21,12 +21,14 @@ public class HanLPTokenizerFactory extends TokenizerFactory
     private boolean enablePorterStemming;
     private boolean enableNumberQuantifierRecognize;
     private boolean enableCustomDictionary;
+    private boolean enableCustomDictionaryForcing;
     private boolean enableTranslatedNameRecognize;
     private boolean enableJapaneseNameRecognize;
     private boolean enableOrganizationRecognize;
     private boolean enablePlaceRecognize;
     private boolean enableNameRecognize;
     private boolean enableTraditionalChineseMode;
+    private String algorithm;
     private Set<String> stopWordDictionary;
 
     /**
@@ -41,13 +43,15 @@ public class HanLPTokenizerFactory extends TokenizerFactory
         enablePorterStemming = getBoolean(args, "enablePorterStemming", false);
         enableNumberQuantifierRecognize = getBoolean(args, "enableNumberQuantifierRecognize", false);
         enableCustomDictionary = getBoolean(args, "enableCustomDictionary", true);
+        enableCustomDictionaryForcing = getBoolean(args, "enableCustomDictionaryForcing", true);
         enableTranslatedNameRecognize = getBoolean(args, "enableTranslatedNameRecognize", false);
         enableJapaneseNameRecognize = getBoolean(args, "enableJapaneseNameRecognize", false);
         enableOrganizationRecognize = getBoolean(args, "enableOrganizationRecognize", false);
         enableNameRecognize = getBoolean(args, "enableNameRecognize", false);
         enablePlaceRecognize = getBoolean(args, "enablePlaceRecognize", false);
         enableTraditionalChineseMode = getBoolean(args, "enableTraditionalChineseMode", false);
-        HanLP.Config.Normalization  = getBoolean(args, "enableNormalization", HanLP.Config.Normalization);
+        HanLP.Config.Normalization = getBoolean(args, "enableNormalization", HanLP.Config.Normalization);
+        algorithm = getString(args, "algorithm", "viterbi");
         Set<String> customDictionaryPathSet = getSet(args, "customDictionaryPath");
         if (customDictionaryPathSet != null)
         {
@@ -59,18 +63,26 @@ public class HanLPTokenizerFactory extends TokenizerFactory
             stopWordDictionary = new TreeSet<>();
             stopWordDictionary.addAll(IOUtil.readLineListWithLessMemory(stopWordDictionaryPath));
         }
-        if (getBoolean(args, "enableDebug", false)) {
-          HanLP.Config.enableDebug();
+        if (getBoolean(args, "enableDebug", false))
+        {
+            HanLP.Config.enableDebug();
         }
+    }
+
+    protected final String getString(Map<String, String> args, String name, String defaultVal)
+    {
+        String s = args.remove(name);
+        return s == null ? defaultVal : s;
     }
 
     @Override
     public Tokenizer create(AttributeFactory factory)
     {
-        Segment segment = HanLP.newSegment().enableOffset(true).enableIndexMode(enableIndexMode)
+        Segment segment = HanLP.newSegment(algorithm).enableOffset(true).enableIndexMode(enableIndexMode)
                 .enableNameRecognize(enableNameRecognize)
                 .enableNumberQuantifierRecognize(enableNumberQuantifierRecognize)
                 .enableCustomDictionary(enableCustomDictionary)
+                .enableCustomDictionaryForcing(enableCustomDictionaryForcing)
                 .enableTranslatedNameRecognize(enableTranslatedNameRecognize)
                 .enableJapaneseNameRecognize(enableJapaneseNameRecognize)
                 .enableOrganizationRecognize(enableOrganizationRecognize)
