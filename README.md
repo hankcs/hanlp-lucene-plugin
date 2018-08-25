@@ -11,7 +11,7 @@ HanLP中文分词Lucene插件
     <dependency>
       <groupId>com.hankcs.nlp</groupId>
       <artifactId>hanlp-lucene-plugin</artifactId>
-      <version>1.1.4</version>
+      <version>1.1.5</version>
     </dependency>
 ```
 
