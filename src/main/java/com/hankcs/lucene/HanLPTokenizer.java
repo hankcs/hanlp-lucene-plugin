@@ -5,6 +5,7 @@ import com.hankcs.hanlp.collection.trie.bintrie.BinTrie;
 import com.hankcs.hanlp.corpus.tag.Nature;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
+import com.hankcs.hanlp.utility.TextUtility;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
@@ -40,9 +41,8 @@ public class HanLPTokenizer extends Tokenizer
     private int totalOffset = 0;
 
     /**
-     *
-     * @param segment HanLP中的某个分词器
-     * @param filter 停用词
+     * @param segment              HanLP中的某个分词器
+     * @param filter               停用词
      * @param enablePorterStemming 英文原型转换
      */
     public HanLPTokenizer(Segment segment, Set<String> filter, boolean enablePorterStemming)
@@ -74,6 +74,10 @@ public class HanLPTokenizer extends Tokenizer
             {
                 break;
             }
+            if (TextUtility.isBlank(term.word)) // 过滤掉空白符，提高索引效率
+            {
+                continue;
+            }
             if (enablePorterStemming && term.nature == Nature.nx)
             {
                 term.word = stemmer.stem(term.word);
@@ -96,7 +100,7 @@ public class HanLPTokenizer extends Tokenizer
             positionAttr.setPositionIncrement(position);
             termAtt.setEmpty().append(term.word);
             offsetAtt.setOffset(correctOffset(totalOffset + term.offset),
-                    correctOffset(totalOffset + term.offset + term.word.length()));
+                                correctOffset(totalOffset + term.offset + term.word.length()));
             typeAtt.setType(term.nature == null ? "null" : term.nature.toString());
             return true;
         }
