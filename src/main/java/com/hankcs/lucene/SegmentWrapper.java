@@ -10,6 +10,7 @@
  */
 package com.hankcs.lucene;
 
+import com.hankcs.hanlp.dictionary.other.CharType;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
 
@@ -121,7 +122,7 @@ public class SegmentWrapper
     {
         for (int i = length - 1; i > 0; i--)
         {
-            if (buffer[i] == '\n')
+            if (buffer[i] == '\n' || CharType.get(buffer[i]) == CharType.CT_DELIMITER)
             {
                 return i + 1;
             }
