@@ -15,32 +15,48 @@ import com.hankcs.hanlp.seg.common.Term;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.Iterator;
 import java.util.List;
-import java.util.Scanner;
 
 /**
+ * 将分词器包装起来，每次输出一个token
+ *
  * @author hankcs
  */
 public class SegmentWrapper
 {
-    Scanner scanner;
-    Segment segment;
     /**
-     * 因为next是单个term出去的，所以在这里做一个记录
+     * 输入
      */
-    Term[] termArray;
+    private Reader input;
     /**
-     * termArray下标
+     * 分词器
      */
-    int index;
+    private Segment segment;
+    /**
+     * 分词结果
+     */
+    private Iterator<Term> iterator;
     /**
      * term的偏移量，由于wrapper是按行读取的，必须对term.offset做一个校正
      */
     int offset;
+    /**
+     * 缓冲区大小
+     */
+    private static final int BUFFER_SIZE = 512;
+    /**
+     * 缓冲区
+     */
+    private char[] buffer = new char[BUFFER_SIZE];
+    /**
+     * 缓冲区未处理的下标
+     */
+    private int remainSize = 0;
 
     public SegmentWrapper(Reader reader, Segment segment)
     {
-        scanner = createScanner(reader);
+        this.input = reader;
         this.segment = segment;
     }
 
@@ -51,66 +67,65 @@ public class SegmentWrapper
      */
     public void reset(Reader reader)
     {
-        scanner = createScanner(reader);
-        termArray = null;
-        index = 0;
+        input = reader;
         offset = 0;
+        iterator = null;
     }
 
     public Term next() throws IOException
     {
-        if (termArray != null && index < termArray.length) return termArray[index++];
-        if (!scanner.hasNext()) return null;
-        String line = scanner.next();
-        while (isBlank(line))
-        {
-            if (line == null) return null;
-            offset += line.length() + 1;
-            if (scanner.hasNext()) {
-              line = scanner.next();
-            } else {
-              return null;
-            }
-        }
-
+        if (iterator != null && iterator.hasNext()) return iterator.next();
+        String line = readLine();
+        if (line == null) return null;
         List<Term> termList = segment.seg(line);
         if (termList.size() == 0) return null;
-        termArray = termList.toArray(new Term[0]);
-        for (Term term : termArray)
+        for (Term term : termList)
         {
             term.offset += offset;
         }
-        index = 0;
-        offset += line.length() + 1;
-
-        return termArray[index++];
+        offset += line.length();
+        iterator = termList.iterator();
+        return iterator.next();
     }
 
-    /**
-     * 判断字符串是否为空（null和空格）
-     *
-     * @param cs
-     * @return
-     */
-    private static boolean isBlank(CharSequence cs)
+    private String readLine() throws IOException
     {
-        int strLen;
-        if (cs == null || (strLen = cs.length()) == 0)
+        int offset = 0;
+        int length = BUFFER_SIZE;
+        if (remainSize > 0)
         {
-            return true;
+            offset = remainSize;
+            length -= remainSize;
         }
-        for (int i = 0; i < strLen; i++)
+        int n = input.read(buffer, offset, length);
+        if (n < 0)
         {
-            if (!Character.isWhitespace(cs.charAt(i)))
+            if (remainSize != 0)
             {
-                return false;
+                String lastLine = new String(buffer, 0, remainSize);
+                remainSize = 0;
+                return lastLine;
+            }
+            return null;
+        }
+        n += offset;
+
+        int eos = lastIndexOfEos(buffer, n);
+        String line = new String(buffer, 0, eos);
+        remainSize = n - eos;
+        System.arraycopy(buffer, eos, buffer, 0, remainSize);
+        return line;
+    }
+
+    private int lastIndexOfEos(char[] buffer, int length)
+    {
+        for (int i = length - 1; i > 0; i--)
+        {
+            if (buffer[i] == '\n')
+            {
+                return i + 1;
             }
         }
-        return true;
-    }
-
-    private static Scanner createScanner(Reader reader)
-    {
-        return new Scanner(reader).useDelimiter("\n");
+        return length;
     }
 }

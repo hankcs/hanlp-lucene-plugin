@@ -60,7 +60,7 @@ public class HighLighterTest extends TestCase
             {
                 // 加入一个文档
                 Document doc = new Document();
-                doc.add(new TextField(fieldName, "\r\n\r\n\r\n 返回值", Field.Store.YES));
+                doc.add(new TextField(fieldName, "\n返回值\r\n返回", Field.Store.YES));
                 doc.add(new TextField("title", "测试回测换行符", Field.Store.YES));
                 iwriter.addDocument(doc);
             }
