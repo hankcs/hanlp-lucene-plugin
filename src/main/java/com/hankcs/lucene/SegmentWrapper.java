@@ -122,7 +122,7 @@ public class SegmentWrapper
     {
         for (int i = length - 1; i > 0; i--)
         {
-            if (buffer[i] == '\n' || CharType.get(buffer[i]) == CharType.CT_DELIMITER)
+            if (buffer[i] == '\n')
             {
                 return i + 1;
             }

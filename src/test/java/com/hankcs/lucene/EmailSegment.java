@@ -16,16 +16,30 @@ import java.util.regex.Pattern;
  */
 public class EmailSegment extends Segment
 {
-    private static final Pattern emailPattern = Pattern.compile("");
+    private static final Pattern emailPattern = Pattern.compile("(\\w+(?:[-+.]\\w+)*)@(\\w+(?:[-.]\\w+)*\\.\\w+(?:[-.]\\w+)*)");
+
     @Override
     protected List<Term> segSentence(char[] chars)
     {
         String text = new String(chars);
         final Matcher matcher = emailPattern.matcher(text);
         List<Term> resultList = new ArrayList<>();
-        while (matcher.find()){
-            resultList.add(new Term(matcher.group(), Nature.nx){{
-                offset = matcher.start();
+        while (matcher.find())
+        {
+            final int start = matcher.start();
+            resultList.add(new Term(matcher.group(), Nature.nx)
+            {{
+                offset = start;
+            }});
+            final String uName = matcher.group(1);
+
+            resultList.add(new Term(uName, Nature.nx)
+            {{
+                offset = start;
+            }});
+            resultList.add(new Term(matcher.group(2), Nature.nx)
+            {{
+                offset = start;
             }});
         }
         return resultList;
