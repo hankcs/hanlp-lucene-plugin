@@ -84,9 +84,9 @@ public class PorterStemmer
         return b;
     }
 
-	/* cons(i) is true <=> b[i] is a consonant. */
+    /* cons(i) is true <=> b[i] is a consonant. */
 
-    private final boolean cons(int i)
+    private boolean cons(int i)
     {
         switch (b[i])
         {
@@ -97,31 +97,29 @@ public class PorterStemmer
             case 'u':
                 return false;
             case 'y':
-                return (i == k0) ? true : !cons(i - 1);
+                return (i == k0) || !cons(i - 1);
             default:
                 return true;
         }
     }
 
-	/*
+    /*
      * m() measures the number of consonant sequences between k0 and j. if c is
-	 * a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
-	 * presence,
-	 * 
-	 * <c><v> gives 0 <c>vc<v> gives 1 <c>vcvc<v> gives 2 <c>vcvcvc<v> gives 3
-	 * ....
-	 */
+     * a consonant sequence and v a vowel sequence, and <..> indicates arbitrary
+     * presence,
+     *
+     * <c><v> gives 0 <c>vc<v> gives 1 <c>vcvc<v> gives 2 <c>vcvcvc<v> gives 3
+     * ....
+     */
 
-    private final int m()
+    private int m()
     {
         int n = 0;
         int i = k0;
         while (true)
         {
-            if (i > j)
-                return n;
-            if (!cons(i))
-                break;
+            if (i > j) return n;
+            if (!cons(i)) break;
             i++;
         }
         i++;
@@ -129,86 +127,75 @@ public class PorterStemmer
         {
             while (true)
             {
-                if (i > j)
-                    return n;
-                if (cons(i))
-                    break;
+                if (i > j) return n;
+                if (cons(i)) break;
                 i++;
             }
             i++;
             n++;
             while (true)
             {
-                if (i > j)
-                    return n;
-                if (!cons(i))
-                    break;
+                if (i > j) return n;
+                if (!cons(i)) break;
                 i++;
             }
             i++;
         }
     }
 
-	/* vowelinstem() is true <=> k0,...j contains a vowel */
+    /* vowelinstem() is true <=> k0,...j contains a vowel */
 
-    private final boolean vowelinstem()
+    private boolean vowelinstem()
     {
         int i;
         for (i = k0; i <= j; i++)
-            if (!cons(i))
-                return true;
+            if (!cons(i)) return true;
         return false;
     }
 
-	/* doublec(j) is true <=> j,(j-1) contain a double consonant. */
+    /* doublec(j) is true <=> j,(j-1) contain a double consonant. */
 
-    private final boolean doublec(int j)
+    private boolean doublec(int j)
     {
-        if (j < k0 + 1)
-            return false;
-        if (b[j] != b[j - 1])
-            return false;
+        if (j < k0 + 1) return false;
+        if (b[j] != b[j - 1]) return false;
         return cons(j);
     }
 
-	/*
-	 * cvc(i) is true <=> i-2,i-1,i has the form consonant - vowel - consonant
-	 * and also if the second c is not w,x or y. this is used when trying to
-	 * restore an e at the end of a short word. e.g.
-	 * 
-	 * cav(e), lov(e), hop(e), crim(e), but snow, box, tray.
-	 */
+    /*
+     * cvc(i) is true <=> i-2,i-1,i has the form consonant - vowel - consonant
+     * and also if the second c is not w,x or y. this is used when trying to
+     * restore an e at the end of a short word. e.g.
+     *
+     * cav(e), lov(e), hop(e), crim(e), but snow, box, tray.
+     */
 
-    private final boolean cvc(int i)
+    private boolean cvc(int i)
     {
-        if (i < k0 + 2 || !cons(i) || cons(i - 1) || !cons(i - 2))
-            return false;
+        if (i < k0 + 2 || !cons(i) || cons(i - 1) || !cons(i - 2)) return false;
         else
         {
             int ch = b[i];
-            if (ch == 'w' || ch == 'x' || ch == 'y')
-                return false;
+            if (ch == 'w' || ch == 'x' || ch == 'y') return false;
         }
         return true;
     }
 
-    private final boolean ends(String s)
+    private boolean ends(String s)
     {
         int l = s.length();
         int o = k - l + 1;
-        if (o < k0)
-            return false;
+        if (o < k0) return false;
         for (int i = 0; i < l; i++)
-            if (b[o + i] != s.charAt(i))
-                return false;
+            if (b[o + i] != s.charAt(i)) return false;
         j = k - l;
         return true;
     }
 
-	/*
-	 * setto(s) sets (j+1),...k to the characters in the string s, readjusting
-	 * k.
-	 */
+    /*
+     * setto(s) sets (j+1),...k to the characters in the string s, readjusting
+     * k.
+     */
 
     void setto(String s)
     {
@@ -220,66 +207,56 @@ public class PorterStemmer
         dirty = true;
     }
 
-	/* r(s) is used further down. */
+    /* r(s) is used further down. */
 
     void r(String s)
     {
-        if (m() > 0)
-            setto(s);
+        if (m() > 0) setto(s);
     }
 
-	/*
-	 * step1() gets rid of plurals and -ed or -ing. e.g.
-	 * 
-	 * caresses -> caress ponies -> poni ties -> ti caress -> caress cats -> cat
-	 * 
-	 * feed -> feed agreed -> agree disabled -> disable
-	 * 
-	 * matting -> mat mating -> mate meeting -> meet milling -> mill messing ->
-	 * mess
-	 * 
-	 * meetings -> meet
-	 */
+    /*
+     * step1() gets rid of plurals and -ed or -ing. e.g.
+     *
+     * caresses -> caress ponies -> poni ties -> ti caress -> caress cats -> cat
+     *
+     * feed -> feed agreed -> agree disabled -> disable
+     *
+     * matting -> mat mating -> mate meeting -> meet milling -> mill messing ->
+     * mess
+     *
+     * meetings -> meet
+     */
 
-    private final void step1()
+    private void step1()
     {
         if (b[k] == 's')
         {
-            if (ends("sses"))
-                k -= 2;
-            else if (ends("ies"))
-                setto("i");
-            else if (b[k - 1] != 's')
-                k--;
+            if (ends("sses")) k -= 2;
+            else if (ends("ies")) setto("i");
+            else if (b[k - 1] != 's') k--;
         }
         if (ends("eed"))
         {
-            if (m() > 0)
-                k--;
+            if (m() > 0) k--;
         }
         else if ((ends("ed") || ends("ing")) && vowelinstem())
         {
             k = j;
-            if (ends("at"))
-                setto("ate");
-            else if (ends("bl"))
-                setto("ble");
-            else if (ends("iz"))
-                setto("ize");
+            if (ends("at")) setto("ate");
+            else if (ends("bl")) setto("ble");
+            else if (ends("iz")) setto("ize");
             else if (doublec(k))
             {
                 int ch = b[k--];
-                if (ch == 'l' || ch == 's' || ch == 'z')
-                    k++;
+                if (ch == 'l' || ch == 's' || ch == 'z') k++;
             }
-            else if (m() == 1 && cvc(k))
-                setto("e");
+            else if (m() == 1 && cvc(k)) setto("e");
         }
     }
 
-	/* step2() turns terminal y to i when there is another vowel in the stem. */
+    /* step2() turns terminal y to i when there is another vowel in the stem. */
 
-    private final void step2()
+    private void step2()
     {
         if (ends("y") && vowelinstem())
         {
@@ -288,16 +265,15 @@ public class PorterStemmer
         }
     }
 
-	/*
-	 * step3() maps double suffices to single ones. so -ization ( = -ize plus
-	 * -ation) maps to -ize etc. note that the string before the suffix must
-	 * give m() > 0.
-	 */
+    /*
+     * step3() maps double suffices to single ones. so -ization ( = -ize plus
+     * -ation) maps to -ize etc. note that the string before the suffix must
+     * give m() > 0.
+     */
 
-    private final void step3()
+    private void step3()
     {
-        if (k == k0)
-            return; /* For Bug 1 */
+        if (k == k0) return; /* For Bug 1 */
         switch (b[k - 1])
         {
             case 'a':
@@ -423,9 +399,9 @@ public class PorterStemmer
         }
     }
 
-	/* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
+    /* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
 
-    private final void step4()
+    private void step4()
     {
         switch (b[k])
         {
@@ -475,99 +451,76 @@ public class PorterStemmer
         }
     }
 
-	/* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
+    /* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
 
-    private final void step5()
+    private void step5()
     {
-        if (k == k0)
-            return; /* for Bug 1 */
+        if (k == k0) return; /* for Bug 1 */
         switch (b[k - 1])
         {
             case 'a':
-                if (ends("al"))
-                    break;
+                if (ends("al")) break;
                 return;
             case 'c':
-                if (ends("ance"))
-                    break;
-                if (ends("ence"))
-                    break;
+                if (ends("ance")) break;
+                if (ends("ence")) break;
                 return;
             case 'e':
-                if (ends("er"))
-                    break;
+                if (ends("er")) break;
                 return;
             case 'i':
-                if (ends("ic"))
-                    break;
+                if (ends("ic")) break;
                 return;
             case 'l':
-                if (ends("able"))
-                    break;
-                if (ends("ible"))
-                    break;
+                if (ends("able")) break;
+                if (ends("ible")) break;
                 return;
             case 'n':
-                if (ends("ant"))
-                    break;
-                if (ends("ement"))
-                    break;
-                if (ends("ment"))
-                    break;
-			/* element etc. not stripped before the m */
-                if (ends("ent"))
-                    break;
+                if (ends("ant")) break;
+                if (ends("ement")) break;
+                if (ends("ment")) break;
+                /* element etc. not stripped before the m */
+                if (ends("ent")) break;
                 return;
             case 'o':
-                if (ends("ion") && j >= 0 && (b[j] == 's' || b[j] == 't'))
-                    break;
-			/* j >= 0 fixes Bug 2 */
-                if (ends("ou"))
-                    break;
+                if (ends("ion") && j >= 0 && (b[j] == 's' || b[j] == 't')) break;
+                /* j >= 0 fixes Bug 2 */
+                if (ends("ou")) break;
                 return;
-			/* takes care of -ous */
+            /* takes care of -ous */
             case 's':
-                if (ends("ism"))
-                    break;
+                if (ends("ism")) break;
                 return;
             case 't':
-                if (ends("ate"))
-                    break;
-                if (ends("iti"))
-                    break;
+                if (ends("ate")) break;
+                if (ends("iti")) break;
                 return;
             case 'u':
-                if (ends("ous"))
-                    break;
+                if (ends("ous")) break;
                 return;
             case 'v':
-                if (ends("ive"))
-                    break;
+                if (ends("ive")) break;
                 return;
             case 'z':
-                if (ends("ize"))
-                    break;
+                if (ends("ize")) break;
                 return;
             default:
                 return;
         }
-        if (m() > 1)
-            k = j;
+        if (m() > 1) k = j;
     }
 
-	/* step6() removes a final -e if m() > 1. */
+    /* step6() removes a final -e if m() > 1. */
 
-    private final void step6()
+    private void step6()
     {
         j = k;
         if (b[k] == 'e')
         {
             int a = m();
-            if (a > 1 || a == 1 && !cvc(k - 1))
-                k--;
+            if (a > 1 || a == 1 && !cvc(k - 1)) k--;
         }
-        if (b[k] == 'l' && doublec(k) && m() > 1)
-            k--;
+        if (b[k] == 'l' && doublec(k) && m() > 1) k--;
     }
 
     /**
@@ -575,10 +528,8 @@ public class PorterStemmer
      */
     public String stem(String s)
     {
-        if (stem(s.toCharArray(), s.length()))
-            return toString();
-        else
-            return s;
+        if (stem(s.toCharArray(), s.length())) return toString();
+        else return s;
     }
 
     /**
@@ -646,8 +597,7 @@ public class PorterStemmer
         }
         // Also, a word is considered dirty if we lopped off letters
         // Thanks to Ifigenia Vairelles for pointing this out.
-        if (i != k + 1)
-            dirty = true;
+        if (i != k + 1) dirty = true;
         i = k + 1;
         return dirty;
     }
@@ -660,11 +610,10 @@ public class PorterStemmer
     {
         PorterStemmer s = new PorterStemmer();
 
-        for (int i = 0; i < args.length; i++)
+        for (String arg : args)
         {
-            try
+            try (InputStream in = new FileInputStream(arg))
             {
-                InputStream in = new FileInputStream(args[i]);
                 byte[] buffer = new byte[1024];
                 int bufferLen, offset, ch;
 
@@ -674,16 +623,13 @@ public class PorterStemmer
 
                 while (true)
                 {
-                    if (offset < bufferLen)
-                        ch = buffer[offset++];
+                    if (offset < bufferLen) ch = buffer[offset++];
                     else
                     {
                         bufferLen = in.read(buffer);
                         offset = 0;
-                        if (bufferLen < 0)
-                            ch = -1;
-                        else
-                            ch = buffer[offset++];
+                        if (bufferLen < 0) ch = -1;
+                        else ch = buffer[offset++];
                     }
 
                     if (Character.isLetter((char) ch))
@@ -695,20 +641,17 @@ public class PorterStemmer
                         s.stem();
                         System.out.print(s.toString());
                         s.reset();
-                        if (ch < 0)
-                            break;
+                        if (ch < 0) break;
                         else
                         {
                             System.out.print((char) ch);
                         }
                     }
                 }
-
-                in.close();
             }
             catch (IOException e)
             {
-                System.out.println("error reading " + args[i]);
+                System.out.println("error reading " + arg);
             }
         }
     }

@@ -13,16 +13,22 @@ package com.hankcs.lucene;
 
 import junit.framework.TestCase;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.*;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.RAMDirectory;
 
 import java.io.IOException;
@@ -100,23 +106,7 @@ public class HighLighterTest extends TestCase
                 System.out.println(displayHtmlHighlight(query, analyzer, fieldName, text, 200));
             }
         }
-        catch (CorruptIndexException e)
-        {
-            e.printStackTrace();
-        }
-        catch (LockObtainFailedException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InvalidTokenOffsetsException e)
+        catch (IOException | ParseException | InvalidTokenOffsetsException e)
         {
             e.printStackTrace();
         }
@@ -166,5 +156,39 @@ public class HighLighterTest extends TestCase
         Fragmenter fragmenter = new SimpleFragmenter(fragmentSize);
         highlighter.setTextFragmenter(fragmenter);
         return highlighter.getBestFragment(analyzer, fieldName, fieldContent);
+    }
+
+
+    /**
+     * 测试特殊分词器
+     */
+    public void testEmail()
+    {
+        // Lucene Document的主要域名
+        String fieldName = "text";
+
+        // 实例化Analyzer分词器
+        Analyzer analyzer = new Analyzer()
+        {
+            @Override
+            protected TokenStreamComponents createComponents(String s)
+            {
+                Tokenizer tokenizer = new HanLPTokenizer(new EmailSegment(), null, true);
+                return new TokenStreamComponents(tokenizer);
+            }
+        };
+        String keyword = "有事请发邮件：wxh192395009@qq.com";
+        //使用QueryParser查询分析器构造Query对象
+        QueryParser qp = new QueryParser(fieldName, analyzer);
+        Query query = null;
+        try
+        {
+            query = qp.parse(keyword);
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("Query = " + query);
     }
 }
