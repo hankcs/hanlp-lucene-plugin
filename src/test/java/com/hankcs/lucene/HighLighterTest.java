@@ -11,8 +11,10 @@
  */
 package com.hankcs.lucene;
 
+import com.hankcs.hanlp.HanLP;
 import junit.framework.TestCase;
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
@@ -166,5 +168,36 @@ public class HighLighterTest extends TestCase
         Fragmenter fragmenter = new SimpleFragmenter(fragmentSize);
         highlighter.setTextFragmenter(fragmenter);
         return highlighter.getBestFragment(analyzer, fieldName, fieldContent);
+    }
+
+
+    public void testEmail()
+    {
+        // Lucene Document的主要域名
+        String fieldName = "text";
+
+        // 实例化Analyzer分词器
+        Analyzer analyzer = new Analyzer()
+        {
+            @Override
+            protected TokenStreamComponents createComponents(String s)
+            {
+                Tokenizer tokenizer = new HanLPTokenizer(new EmailSegment(), null, true);
+                return new TokenStreamComponents(tokenizer);
+            }
+        };
+        String keyword = "有事请发邮件：wxh192395009@qq.com";
+        //使用QueryParser查询分析器构造Query对象
+        QueryParser qp = new QueryParser(fieldName, analyzer);
+        Query query = null;
+        try
+        {
+            query = qp.parse(keyword);
+        }
+        catch (ParseException e)
+        {
+            e.printStackTrace();
+        }
+        System.out.println("Query = " + query);
     }
 }
