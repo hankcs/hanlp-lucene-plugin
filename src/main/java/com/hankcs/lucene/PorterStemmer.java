@@ -86,7 +86,7 @@ public class PorterStemmer
 
 	/* cons(i) is true <=> b[i] is a consonant. */
 
-    private final boolean cons(int i)
+    private boolean cons(int i)
     {
         switch (b[i])
         {
@@ -97,7 +97,7 @@ public class PorterStemmer
             case 'u':
                 return false;
             case 'y':
-                return (i == k0) ? true : !cons(i - 1);
+                return (i == k0) || !cons(i - 1);
             default:
                 return true;
         }
@@ -112,7 +112,7 @@ public class PorterStemmer
 	 * ....
 	 */
 
-    private final int m()
+    private int m()
     {
         int n = 0;
         int i = k0;
@@ -151,7 +151,7 @@ public class PorterStemmer
 
 	/* vowelinstem() is true <=> k0,...j contains a vowel */
 
-    private final boolean vowelinstem()
+    private boolean vowelinstem()
     {
         int i;
         for (i = k0; i <= j; i++)
@@ -162,7 +162,7 @@ public class PorterStemmer
 
 	/* doublec(j) is true <=> j,(j-1) contain a double consonant. */
 
-    private final boolean doublec(int j)
+    private boolean doublec(int j)
     {
         if (j < k0 + 1)
             return false;
@@ -179,7 +179,7 @@ public class PorterStemmer
 	 * cav(e), lov(e), hop(e), crim(e), but snow, box, tray.
 	 */
 
-    private final boolean cvc(int i)
+    private boolean cvc(int i)
     {
         if (i < k0 + 2 || !cons(i) || cons(i - 1) || !cons(i - 2))
             return false;
@@ -192,7 +192,7 @@ public class PorterStemmer
         return true;
     }
 
-    private final boolean ends(String s)
+    private boolean ends(String s)
     {
         int l = s.length();
         int o = k - l + 1;
@@ -241,7 +241,7 @@ public class PorterStemmer
 	 * meetings -> meet
 	 */
 
-    private final void step1()
+    private void step1()
     {
         if (b[k] == 's')
         {
@@ -279,7 +279,7 @@ public class PorterStemmer
 
 	/* step2() turns terminal y to i when there is another vowel in the stem. */
 
-    private final void step2()
+    private void step2()
     {
         if (ends("y") && vowelinstem())
         {
@@ -294,7 +294,7 @@ public class PorterStemmer
 	 * give m() > 0.
 	 */
 
-    private final void step3()
+    private void step3()
     {
         if (k == k0)
             return; /* For Bug 1 */
@@ -425,7 +425,7 @@ public class PorterStemmer
 
 	/* step4() deals with -ic-, -full, -ness etc. similar strategy to step3. */
 
-    private final void step4()
+    private void step4()
     {
         switch (b[k])
         {
@@ -477,7 +477,7 @@ public class PorterStemmer
 
 	/* step5() takes off -ant, -ence etc., in context <c>vcvc<v>. */
 
-    private final void step5()
+    private void step5()
     {
         if (k == k0)
             return; /* for Bug 1 */
@@ -557,7 +557,7 @@ public class PorterStemmer
 
 	/* step6() removes a final -e if m() > 1. */
 
-    private final void step6()
+    private void step6()
     {
         j = k;
         if (b[k] == 'e')
@@ -660,11 +660,8 @@ public class PorterStemmer
     {
         PorterStemmer s = new PorterStemmer();
 
-        for (int i = 0; i < args.length; i++)
-        {
-            try
-            {
-                InputStream in = new FileInputStream(args[i]);
+        for (String arg : args) {
+            try (InputStream in = new FileInputStream(arg)){
                 byte[] buffer = new byte[1024];
                 int bufferLen, offset, ch;
 
@@ -672,12 +669,10 @@ public class PorterStemmer
                 offset = 0;
                 s.reset();
 
-                while (true)
-                {
+                while (true) {
                     if (offset < bufferLen)
                         ch = buffer[offset++];
-                    else
-                    {
+                    else {
                         bufferLen = in.read(buffer);
                         offset = 0;
                         if (bufferLen < 0)
@@ -686,29 +681,21 @@ public class PorterStemmer
                             ch = buffer[offset++];
                     }
 
-                    if (Character.isLetter((char) ch))
-                    {
+                    if (Character.isLetter((char) ch)) {
                         s.add(Character.toLowerCase((char) ch));
-                    }
-                    else
-                    {
+                    } else {
                         s.stem();
                         System.out.print(s.toString());
                         s.reset();
                         if (ch < 0)
                             break;
-                        else
-                        {
+                        else {
                             System.out.print((char) ch);
                         }
                     }
                 }
-
-                in.close();
-            }
-            catch (IOException e)
-            {
-                System.out.println("error reading " + args[i]);
+            } catch (IOException e) {
+                System.out.println("error reading " + arg);
             }
         }
     }
