@@ -10,14 +10,15 @@
  */
 package com.hankcs.lucene;
 
-import com.hankcs.hanlp.dictionary.other.CharType;
 import com.hankcs.hanlp.seg.Segment;
 import com.hankcs.hanlp.seg.common.Term;
 
 import java.io.IOException;
 import java.io.Reader;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 将分词器包装起来，每次输出一个token
@@ -54,6 +55,21 @@ public class SegmentWrapper
      * 缓冲区未处理的下标
      */
     private int remainSize = 0;
+
+
+    /**
+     * 句子分隔符
+     */
+    private static final Set<Character> delimiterCharSet = new HashSet<Character>()
+    {{
+        add('\r');
+        add('\n');
+        add(';');
+        add('；');
+        add('。');
+        add('!');
+        add('！');
+    }};
 
     public SegmentWrapper(Reader reader, Segment segment)
     {
@@ -122,7 +138,7 @@ public class SegmentWrapper
     {
         for (int i = length - 1; i > 0; i--)
         {
-            if (buffer[i] == '\n')
+            if (delimiterCharSet.contains(buffer[i]))
             {
                 return i + 1;
             }

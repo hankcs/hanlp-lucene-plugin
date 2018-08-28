@@ -11,20 +11,24 @@
  */
 package com.hankcs.lucene;
 
-import com.hankcs.hanlp.HanLP;
 import junit.framework.TestCase;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.*;
+import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexWriter;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.*;
+import org.apache.lucene.search.IndexSearcher;
+import org.apache.lucene.search.Query;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.*;
 import org.apache.lucene.store.Directory;
-import org.apache.lucene.store.LockObtainFailedException;
 import org.apache.lucene.store.RAMDirectory;
 
 import java.io.IOException;
@@ -102,23 +106,7 @@ public class HighLighterTest extends TestCase
                 System.out.println(displayHtmlHighlight(query, analyzer, fieldName, text, 200));
             }
         }
-        catch (CorruptIndexException e)
-        {
-            e.printStackTrace();
-        }
-        catch (LockObtainFailedException e)
-        {
-            e.printStackTrace();
-        }
-        catch (IOException e)
-        {
-            e.printStackTrace();
-        }
-        catch (ParseException e)
-        {
-            e.printStackTrace();
-        }
-        catch (InvalidTokenOffsetsException e)
+        catch (IOException | ParseException | InvalidTokenOffsetsException e)
         {
             e.printStackTrace();
         }
@@ -171,6 +159,9 @@ public class HighLighterTest extends TestCase
     }
 
 
+    /**
+     * 测试特殊分词器
+     */
     public void testEmail()
     {
         // Lucene Document的主要域名
