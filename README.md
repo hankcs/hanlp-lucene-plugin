@@ -16,7 +16,7 @@ HanLP中文分词Lucene插件
 ```
 
 ## Solr快速上手
- 1. 将[hanlp-portable.jar](http://central.maven.org/maven2/com/hankcs/hanlp/portable-1.5.3/hanlp-portable-1.5.3.jar)和[hanlp-lucene-plugin.jar](https://github.com/hankcs/hanlp-lucene-plugin/releases)共两个jar放入```${webapp}/WEB-INF/lib```下。（或者使用```mvn package```对源码打包，拷贝```target/hanlp-lucene-plugin-x.x.x.jar```到```${webapp}/WEB-INF/lib```下）
+ 1. 将[hanlp-portable.jar](https://search.maven.org/search?q=g:com.hankcs%20AND%20a:hanlp)和[hanlp-lucene-plugin.jar](https://github.com/hankcs/hanlp-lucene-plugin/releases)共两个jar放入```${webapp}/WEB-INF/lib```下。（或者使用```mvn package```对源码打包，拷贝```target/hanlp-lucene-plugin-x.x.x.jar```到```${webapp}/WEB-INF/lib```下）
  1. 修改solr core的配置文件```${core}/conf/schema.xml```：
 
 ```xml
