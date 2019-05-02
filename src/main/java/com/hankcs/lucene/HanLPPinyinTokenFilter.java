@@ -19,7 +19,7 @@ public final class HanLPPinyinTokenFilter extends TokenFilter {
     // 当前词
     private final CharTermAttribute charTermAttribute = addAttribute(CharTermAttribute.class);
     // 是否保留原词
-    private final boolean reserve;
+    private final boolean original;
     // 拼音转换器
     private final Collection<HanLPPinyinConverter> converters;
     // 待输出拼音队列
@@ -36,9 +36,9 @@ public final class HanLPPinyinTokenFilter extends TokenFilter {
         this(input, true, Arrays.asList(converters));
     }
 
-    public HanLPPinyinTokenFilter(TokenStream input, boolean reserve, Collection<HanLPPinyinConverter> converters) {
+    public HanLPPinyinTokenFilter(TokenStream input, boolean original, Collection<HanLPPinyinConverter> converters) {
         super(input);
-        this.reserve = reserve;
+        this.original = original;
         this.converters = converters;
         this.queue = new ArrayDeque<>(converters.size());
     }
@@ -61,7 +61,7 @@ public final class HanLPPinyinTokenFilter extends TokenFilter {
                         queue.offer(pinyinTerm);
                     }
                 }
-                if (reserve) {
+                if (original) {
                     return true;
                 }
             } else {
