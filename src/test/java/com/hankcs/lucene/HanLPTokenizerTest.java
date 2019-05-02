@@ -10,6 +10,8 @@ import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HanLPTokenizerTest extends TestCase
 {
@@ -60,7 +62,12 @@ public class HanLPTokenizerTest extends TestCase
 
     public void testPinyinTokenFilter() throws Exception
     {
-        TokenStream tokenStream = new HanLPPinyinTokenFilter(tokenizer);
+        Map<String, String> args = new HashMap<>();
+        args.put("original", "true");
+        args.put("pinyin", "false");
+        args.put("pinyinFirstChar", "true");
+        HanLPPinyinTokenFilterFactory factory = new HanLPPinyinTokenFilterFactory(args);
+        TokenStream tokenStream = factory.create(tokenizer);
         while (tokenStream.incrementToken())
         {
             CharTermAttribute attribute = tokenizer.getAttribute(CharTermAttribute.class);
