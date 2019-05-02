@@ -17,7 +17,7 @@ public class HanLPPinyinTokenFilterFactory extends TokenFilterFactory {
      *
      * @param args 通过这个Map保存xml中的配置项
      */
-    protected HanLPPinyinTokenFilterFactory(Map<String, String> args) {
+    public HanLPPinyinTokenFilterFactory(Map<String, String> args) {
         super(args);
         original = getBoolean(args, "original", true);
         pinyin = getBoolean(args, "pinyin", true);
