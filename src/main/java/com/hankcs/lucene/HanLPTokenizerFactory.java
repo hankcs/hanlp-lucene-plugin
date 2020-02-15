@@ -43,7 +43,7 @@ public class HanLPTokenizerFactory extends TokenizerFactory
         enablePorterStemming = getBoolean(args, "enablePorterStemming", false);
         enableNumberQuantifierRecognize = getBoolean(args, "enableNumberQuantifierRecognize", false);
         enableCustomDictionary = getBoolean(args, "enableCustomDictionary", true);
-        enableCustomDictionaryForcing = getBoolean(args, "enableCustomDictionaryForcing", true);
+        enableCustomDictionaryForcing = getBoolean(args, "enableCustomDictionaryForcing", false);
         enableTranslatedNameRecognize = getBoolean(args, "enableTranslatedNameRecognize", false);
         enableJapaneseNameRecognize = getBoolean(args, "enableJapaneseNameRecognize", false);
         enableOrganizationRecognize = getBoolean(args, "enableOrganizationRecognize", false);
