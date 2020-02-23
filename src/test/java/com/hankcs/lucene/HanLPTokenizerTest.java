@@ -1,9 +1,8 @@
 package com.hankcs.lucene;
 
 import com.hankcs.hanlp.HanLP;
-import com.hankcs.hanlp.seg.CRF.CRFSegment;
-import com.hankcs.hanlp.tokenizer.TraditionalChineseTokenizer;
 import junit.framework.TestCase;
+import org.apache.lucene.analysis.TokenStream;
 import org.apache.lucene.analysis.Tokenizer;
 import org.apache.lucene.analysis.tokenattributes.CharTermAttribute;
 import org.apache.lucene.analysis.tokenattributes.OffsetAttribute;
@@ -11,6 +10,8 @@ import org.apache.lucene.analysis.tokenattributes.PositionIncrementAttribute;
 import org.apache.lucene.analysis.tokenattributes.TypeAttribute;
 
 import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class HanLPTokenizerTest extends TestCase
 {
@@ -56,6 +57,27 @@ public class HanLPTokenizerTest extends TestCase
             tokenizer.reset();
             testIncrementToken();
             tokenizer.close();
+        }
+    }
+
+    public void testPinyinTokenFilter() throws Exception
+    {
+        Map<String, String> args = new HashMap<>();
+        args.put("original", "true");
+        args.put("pinyin", "false");
+        args.put("pinyinFirstChar", "true");
+        HanLPPinyinTokenFilterFactory factory = new HanLPPinyinTokenFilterFactory(args);
+        TokenStream tokenStream = factory.create(tokenizer);
+        while (tokenStream.incrementToken())
+        {
+            CharTermAttribute attribute = tokenizer.getAttribute(CharTermAttribute.class);
+            // 偏移量
+            OffsetAttribute offsetAtt = tokenizer.getAttribute(OffsetAttribute.class);
+            // 距离
+            PositionIncrementAttribute positionAttr = tokenizer.getAttribute(PositionIncrementAttribute.class);
+            // 词性
+            TypeAttribute typeAttr = tokenizer.getAttribute(TypeAttribute.class);
+            System.out.printf("[%d:%d %d] %s/%s\n", offsetAtt.startOffset(), offsetAtt.endOffset(), positionAttr.getPositionIncrement(), attribute, typeAttr.type());
         }
     }
 }
